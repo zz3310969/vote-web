@@ -52,10 +52,19 @@ export default class CRouter extends Component {
         if (!auth || !auth.data.permissions.includes(permission)) hashHistory.replace('/404');
         return component;
     };
+    loginAuth = (nextState, replace, next) => {
+        var user = localStorage.getItem('user');
+        if(user == null){
+            replace('login');
+            next();
+        }
+        next();
+
+    };
     render() {
         return (
             <Router history={hashHistory}>
-                <Route path={'/'} components={Page}>
+                <Route onEnter={this.loginAuth} path={'/'} components={Page}>
                     <IndexRedirect to="/app/dashboard/index" />
                     <Route path={'app'} component={App}>
                         <Route path={'activity'}>
@@ -101,27 +110,28 @@ export default class CRouter extends Component {
 
                         {/* 投票管理系统*/}
                         <Route path={'activity'}>
-                            <Route  path="list" components={ActivityList} />
-                            <Route  path="add" components={ActivityAdd} />
+                            <Route  path={"list"} components={ActivityList} />
+                            <Route  path={"add"} components={ActivityAdd} />
                         </Route>
                         <Route path={'regist'}>
-                            <Route  path="list" components={RegistList} />
-                            <Route  path="view" components={RegistView} />
+                            <Route  path={"list"} components={RegistList} />
+                            <Route  path={"view"} components={RegistView} />
                         </Route>
                         <Route path={'auditing'}>
-                            <Route  path="list" components={AuditingList} />
+                            <Route  path={"list"} components={AuditingList} />
                         </Route>
                         <Route path={'vote'}>
-                            <Route  path="list" components={VoteList} />
-                            <Route  path="statistic" components={VoteStatisticList} />
+                            <Route  path={"list"} components={VoteList} />
+                            <Route  path={"statistic"} components={VoteStatisticList} />
                         </Route>
                     </Route>
-                    <Route path={'login'} components={Login} />
                     <Route path={'404'} component={NotFound} />
 
 
 
                 </Route>
+                <Route path={'login'} components={Login} />
+
             </Router>
         )
     }

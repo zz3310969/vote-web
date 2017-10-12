@@ -4,6 +4,11 @@
 import axios from 'axios';
 import { get } from './tools';
 import * as config from './config';
+import md5Util from '../utils/md5';
+import { message } from 'antd';
+/*axios.defaults.baseURL = 'http://localhost:8080/selin-web/';
+axios.defaults.headers.common['Authorization'] = '';
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';*/
 
 export const getPros = () => axios.post('http://api.xitu.io/resources/github', {
     category: "trending",
@@ -37,3 +42,18 @@ export const admin = () => get({url: config.MOCK_AUTH_ADMIN});
 
 // 访问权限获取
 export const guest = () => get({url: config.MOCK_AUTH_VISITOR});
+
+
+
+
+export const login = (params) =>
+    axios.get('/api/tokenAction/accessToken.action',{
+        params:{
+            username:params.username,
+            password:md5Util.to_hex_md5(params.password).toUpperCase()
+        }
+    }).then(res => res.data).catch(function (error) {
+            debugger;
+            console.log(error);
+        });
+

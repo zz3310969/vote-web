@@ -21,5 +21,5 @@ export const receiveData = (data, category) => ({
 export const fetchData = ({funcName, params, stateName}) => dispatch => {
     !stateName && (stateName = funcName);
     dispatch(requestData(stateName));
-    return http[funcName](params).then(res => dispatch(receiveData(res, stateName)));
+    return http[funcName](params).then(res =>{debugger; {dispatch(receiveData(res, stateName))}});
 };

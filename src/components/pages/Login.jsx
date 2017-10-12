@@ -17,8 +17,11 @@ class Login extends React.Component {
     componentWillReceiveProps(nextProps) {
         const { auth: nextAuth = {} } = nextProps;
         const { router } = this.props;
-        if (nextAuth.data && nextAuth.data.uid) {   // 判断是否登陆
-            localStorage.setItem('user', JSON.stringify(nextAuth.data));
+        if (nextAuth.data && nextAuth.data.state=='success') {   // 判断是否登陆
+            let re = nextAuth.data.data;
+            debugger;
+            localStorage.setItem('user', JSON.stringify(re.user));
+            localStorage.setItem('token',re.token.access_token);
             router.push('/');
         }
     }
@@ -28,8 +31,8 @@ class Login extends React.Component {
             if (!err) {
                 console.log('Received values of form: ', values);
                 const { fetchData } = this.props;
-                if (values.userName === 'admin' && values.password === 'admin') fetchData({funcName: 'admin', stateName: 'auth'});
-                if (values.userName === 'guest' && values.password === 'guest') fetchData({funcName: 'guest', stateName: 'auth'});
+                fetchData({funcName: 'login',params:{username:values.userName,password:values.password}, stateName: 'auth'});
+                //fetchData({funcName: 'admin', stateName: 'auth'});
             }
         });
     };

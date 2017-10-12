@@ -128,14 +128,15 @@ class SiderCustom extends Component {
                         <Menu.Item key="/404"><Link to={'/404'}>404</Link></Menu.Item>
                     </SubMenu>
                     <SubMenu
-                        key="sub_activity"
+                        key="/app/activity"
                         title={<span><Icon type="switcher" /><span className="nav-text">活动配置</span></span>}
                     >
-                        <Menu.Item key="/activity"><Link to={'/app/activity/activity'}>活动</Link></Menu.Item>
-                        <Menu.Item key="/auditing"><Link to={'/app/activity/auditing'}>审计</Link></Menu.Item>
-                        <Menu.Item key="/regist"><Link to={'/app/activity/regist'}>注册</Link></Menu.Item>
-                        <Menu.Item key="/vote"><Link to={'/app/activity/vote'}>投票</Link></Menu.Item>
+                        <Menu.Item key="/app/activity/activity"><Link to={'/app/activity/activity'}>活动</Link></Menu.Item>
+                        <Menu.Item key="/app/activity/auditing"><Link to={'/app/activity/auditing'}>审计</Link></Menu.Item>
+                        <Menu.Item key="/app/activity/regist"><Link to={'/app/activity/regist'}>注册</Link></Menu.Item>
+                        <Menu.Item key="/app/activity/vote"><Link to={'/app/activity/vote'}>投票</Link></Menu.Item>
                     </SubMenu>
+
                     <SubMenu
                         key="/app/auth"
                         title={<span><Icon type="safety" /><span className="nav-text">权限管理</span></span>}
