@@ -5,7 +5,7 @@ import { Link } from 'react-router';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {fetchData, receiveData} from '@/action';
-import { actbase,actsave} from '../../axios';
+import { actbase,actsave,actload} from '../../axios';
 
 
 
@@ -22,17 +22,20 @@ class ActivityAddForms extends React.Component {
     state = {
         confirmDirty: false,
         code : '',
-        vals :[]
+        vals :[],
+        activity:{}
 
     };
 
     componentDidMount() {
-        this.start();
+
+        this.start({id:this.props.params.id});
     }
 
     start = (parm) => {
         this.setState({loading: true});
-        actbase().then(res => {
+        actload(parm).then(res => {
+            debugger;
             console.log(res.data.vals)
             this.setState({
                 code : res.data.code,
@@ -122,6 +125,7 @@ class ActivityAddForms extends React.Component {
                             hasFeedback
                         >
                             {getFieldDecorator('name', {
+                                initialValue:this.state.activity.name,
                                 rules: [{
                                     required: true, message: '请输入活动名称!',
                                 }],

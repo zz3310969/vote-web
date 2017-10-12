@@ -113,8 +113,8 @@
     "extends": "react-app"
   },
   "proxy": {
-    "/api":{
-      "target":"http://localhost:8080/vote",
+    "/api": {
+      "target": "http://localhost:8080/vote",
       "ws": true,
       "pathRewrite": {
         "/api": "/"
