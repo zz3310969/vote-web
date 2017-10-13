@@ -2,65 +2,62 @@ import React from 'react';
 import {Row, Col,Table,Input,Button,Icon,DatePicker,Form,Card,} from 'antd';
 import BreadcrumbCustom from '../../components/BreadcrumbCustom';
 import { Link } from 'react-router';
+import { votelist} from '../../axios';
+
 const { MonthPicker, RangePicker } = DatePicker;
-
-
 /*投票结果列表*/
-
 const FormItem = Form.Item;
-
-
-
-const data = [{
-    key: '1',
-    id:'1',
-    works_name:'作品1',
-    vote_num:'000001',
-    works_linkman: 'John Brown',
-    linkman_tel: 13388612507,
-    vote_user: '张三',
-    vote_date:'2017-09-09 22:29:12',
-    vote_count: 3
-},{
-    key: '2',
-    id:'2',
-    works_name:'作品13',
-    vote_num:'000002',
-    works_linkman: 'John Brown',
-    linkman_tel: 13388612507,
-    vote_user: '张三',
-    vote_date:'2017-09-09 22:29:12',
-    vote_count: 3
-},{
-    key: '3',
-    id:'3',
-    works_name:'作品31',
-    vote_num:'000003',
-    works_linkman: 'John Brown',
-    linkman_tel: 13388612507,
-    vote_user: '张三12',
-    vote_date:'2017-09-09 22:29:12',
-    vote_count: 3
-},{
-    key: '4',
-    id:'4',
-    works_name:'作品41',
-    vote_num:'000005',
-    works_linkman: 'John Brown',
-    linkman_tel: 13388612507,
-    vote_user: '张三23',
-    vote_date:'2017-09-09 22:29:12',
-    vote_count: 3
-}];
-
 class VoteList extends React.Component {
     state = {
+        from_query: {
+            name: '',
+            currentPage: 1,
+            limit: 10
+        },
         size: 'default',
         loading: false,
         iconLoading: false,
+        data: []
     };
-    searchHandle = () => {
-      //搜索事件
+
+    componentDidMount() {
+        this.start(this.state.from_query);
+    }
+
+    start = (parm) => {
+        this.setState({loading: true});
+
+        votelist(parm).then(res => {
+            console.log(res.data)
+            this.setState({
+                data: [...res.data.dataList.map(val => {
+                    val.key = val.id;
+                    return val;
+                })],
+                loading: false
+            });
+        });
+    };
+
+    handleSubmit = (e) => {
+        let submitValues = {};
+        e.preventDefault();
+        this.props.form.validateFields((err, values) => {
+            if (!err) {
+                Object.assign(submitValues, values)
+                const {dispatch} = this.props;
+                this.setState({loading: true});
+                votelist(submitValues).then(res => {
+                    this.setState({
+                        data: [...res.data.dataList.map(val => {
+                            val.key = val.id;
+                            return val;
+                        })],
+                        loading: false
+                    });
+                });
+            }
+        });
     };
     render() {
         const self = this;
@@ -95,7 +92,7 @@ class VoteList extends React.Component {
         }];
 
         const VoteTable = () => (
-            <Table columns={columns} dataSource={data} />
+            <Table columns={columns} dataSource={this.state.data} />
         );
 
         const size = this.state.size;

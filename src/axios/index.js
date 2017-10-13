@@ -6,9 +6,49 @@ import { get } from './tools';
 import * as config from './config';
 import md5Util from '../utils/md5';
 import { message } from 'antd';
+import querystring from 'querystring';
 /*axios.defaults.baseURL = 'http://localhost:8080/selin-web/';
 axios.defaults.headers.common['Authorization'] = '';
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';*/
+
+/** 活动 */
+export const actlist = (params) => axios.get('/api/vote/activityAction/list.action',{params:params}).then(function (response) {
+    return response.data;
+}).catch(function (error) {
+    console.log(error);
+});
+
+export const actbase = () => axios.get('/api/vote/activityAction/base.action').then(function (response) {
+    return response.data;
+}).catch(function (error) {
+    console.log(error);
+});
+
+export const actload = (params) => axios.get('/api/vote/activityAction/load.action',{params:params}).then(function (response) {
+    return response.data;
+}).catch(function (error) {
+    console.log(error);
+});
+
+export const actsave = (params) => axios.post('/api/vote/activityAction/create.action',params).then(function (response) {
+    return response.data;
+}).catch(function (error) {
+    console.log(error);
+});
+
+export const actupdate = (params) => axios.post('/api/vote/activityAction/update.action',params).then(function (response) {
+    return response.data;
+}).catch(function (error) {
+    console.log(error);
+});
+/** 投票 */
+export const votelist = (params) => axios.get('/api/vote/voteAction/list.action',{params:params}).then(function (response) {
+    console.log(response.data)
+    return response.data;
+}).catch(function (error) {
+    console.log(error);
+});
+
 
 export const getPros = () => axios.post('http://api.xitu.io/resources/github', {
     category: "trending",

@@ -34,7 +34,8 @@ import RegistList from '../pages/regist/List';
 import RegistView from '../pages/regist/View';
 import AuditingList from '../pages/auditing/List';
 import VoteList from '../pages/vote/List';
-import VoteStatisticList from '../pages/vote/Statistic';
+import VoteStatisticsList from '../pages/vote/Statistic';
+import ActivityUpdate from '../pages/activity/Update';
 
 
 
@@ -67,12 +68,6 @@ export default class CRouter extends Component {
                 <Route onEnter={this.loginAuth} path={'/'} components={Page}>
                     <IndexRedirect to="/app/dashboard/index" />
                     <Route path={'app'} component={App}>
-                        <Route path={'activity'}>
-                            <Route path={'activity'} component={ActivityList} />
-                            <Route path={'auditing'} component={AuditingList} />
-                            <Route path={'regist'} component={RegistList} />
-                            <Route path={'vote'} component={VoteList} />
-                        </Route>
                         <Route path={'form'}>
                             <Route path={'basicForm'} component={BasicForm} />
                         </Route>
@@ -112,6 +107,7 @@ export default class CRouter extends Component {
                         <Route path={'activity'}>
                             <Route  path={"list"} components={ActivityList} />
                             <Route  path={"add"} components={ActivityAdd} />
+                            <Route  path={"update/:id"} components={ActivityUpdate} />
                         </Route>
                         <Route path={'regist'}>
                             <Route  path={"list"} components={RegistList} />
@@ -122,7 +118,7 @@ export default class CRouter extends Component {
                         </Route>
                         <Route path={'vote'}>
                             <Route  path={"list"} components={VoteList} />
-                            <Route  path={"statistic"} components={VoteStatisticList} />
+                            <Route  path={"statistic"} components={VoteStatisticsList} />
                         </Route>
                     </Route>
                     <Route path={'404'} component={NotFound} />

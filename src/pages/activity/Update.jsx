@@ -5,12 +5,11 @@ import { Link } from 'react-router';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {fetchData, receiveData} from '@/action';
-import { actbase,actsave} from '../../axios';
+import { actbase,actupdate,actload} from '../../axios';
 
-
-
+import 'moment/locale/zh-cn';
+import moment from 'moment';
 const { MonthPicker, RangePicker } = DatePicker;
-
 /*活动管理新增*/
 
 const FormItem = Form.Item;
@@ -22,20 +21,24 @@ class ActivityAddForms extends React.Component {
     state = {
         confirmDirty: false,
         code : '',
-        vals :[]
+        vals :[],
+        activity:{},
+        sign_range_date :[],
+        vote_range_date:[]
 
     };
-
     componentDidMount() {
-        this.start();
+        this.start({id:this.props.params.id});
     }
 
     start = (parm) => {
         this.setState({loading: true});
-        actbase().then(res => {
-            console.log(res.data.vals)
+        actload(parm).then(res => {
+            console.log(res.data)
             this.setState({
-                code : res.data.code,
+                activity : res.data.activity,
+                sign_range_date :[moment(res.data.activity.apply_start_time), moment(res.data.activity.apply_end_time)] ,
+                vote_range_date : [moment(res.data.activity.vote_start_time), moment(res.data.activity.vote_end_time)] ,
                 vals : res.data.vals,
                 loading: false
             });
@@ -48,7 +51,8 @@ class ActivityAddForms extends React.Component {
         let submitValues = {};
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
-            if (!err) {
+            if (err) {
+            } else {
                 Object.assign(submitValues, values)
                 console.log(submitValues)
                 submitValues["apply_start_time"] = values["sign_range_date"][0].format('YYYY-MM-DD HH:mm:ss')
@@ -58,28 +62,14 @@ class ActivityAddForms extends React.Component {
                 const {dispatch} = this.props;
                 console.log(submitValues)
                 this.setState({loading: true});
-                actsave(submitValues).then(res => {
+                actupdate(submitValues).then(res => {
                     this.context.router.push({
                         pathname: '/app/activity/activity'
-                    });
-                    this.setState({
-                        loading: false
                     });
                 });
             }
         });
     };
-    // handleConfirmBlur = (e) => {
-    //     const value = e.target.value;
-    //     this.setState({ confirmDirty: this.state.confirmDirty || !!value });
-    // };
-    // checkConfirm = (rule, value, callback) => {
-    //     const form = this.props.form;
-    //     if (value && this.state.confirmDirty) {
-    //         form.validateFields(['confirm'], { force: true });
-    //     }
-    //     callback();
-    // };
     render() {
         const { getFieldDecorator } = this.props.form;
         const formItemLayout = {
@@ -116,7 +106,7 @@ class ActivityAddForms extends React.Component {
         };
         return (
         <div className="gutter-example">
-            <BreadcrumbCustom first="活动管理" second="活动新增" />
+            <BreadcrumbCustom first="活动修改" second="活动修改" />
             <Card  bordered={false} title="活动信息" extra={<Link to={'/app/activity/list'}><Button>返回</Button></Link>}>
                 <Form layout='horizontal' onSubmit={this.handleSubmit} style={{marginTop: 20}}>
                 <Row gutter={16}>
@@ -127,6 +117,7 @@ class ActivityAddForms extends React.Component {
                             hasFeedback
                         >
                             {getFieldDecorator('name', {
+                                initialValue:this.state.activity.name,
                                 rules: [{
                                     required: true, message: '请输入活动名称!',
                                 }],
@@ -143,7 +134,7 @@ class ActivityAddForms extends React.Component {
                             hasFeedback
                         >
                             {getFieldDecorator('code', {
-                                initialValue:this.state.code,
+                                initialValue:this.state.activity.code,
                                 rules: [{
                                     required: true, message: '请输入活动编码!',
                                 }],
@@ -160,6 +151,7 @@ class ActivityAddForms extends React.Component {
                             hasFeedback
                         >
                             {getFieldDecorator('sign_range_date', {
+                                initialValue:this.state.sign_range_date,
                                 rules: [{
                                     required: true, message: '请填写报名时间!',
                                 }],
@@ -175,6 +167,7 @@ class ActivityAddForms extends React.Component {
                             hasFeedback
                         >
                             {getFieldDecorator('vote_range_date', {
+                                initialValue:this.state.vote_range_date,
                                 rules: [{
                                     required: true, message: '请填写投票时间!',
                                 }],
@@ -191,7 +184,7 @@ class ActivityAddForms extends React.Component {
                             initialValue={2}
                         >
                             {getFieldDecorator('vote_limit', {
-                                initialValue:5,
+                                initialValue:this.state.activity.vote_limit,
                                 rules: [{
                                     required: true, message: '每人每天可投票数!',
                                 }],
@@ -200,25 +193,26 @@ class ActivityAddForms extends React.Component {
                             )}
                         </FormItem>
                     </Col>
-                    {/*<Col className="gutter-row" md={12}>*/}
-                        {/*<FormItem*/}
-                            {/*{...formItemLayout}*/}
-                            {/*label="活动状态"*/}
-                            {/*hasFeedback*/}
-                        {/*>*/}
-                            {/*{getFieldDecorator('status', {*/}
-                                {/*rules: [{*/}
-                                    {/*required: true, message: '活动状态!',*/}
-                                {/*}],*/}
-                            {/*})(*/}
-                                {/*<Select>*/}
-                                    {/*{this.state.vals.map(d => <Select.Option key={d.code}>{d.name}</Select.Option>)}*/}
-                                    {/*/!*<Select.Option key={1}>有效</Select.Option>*!/*/}
-                                    {/*/!*<Select.Option key={0}>失效</Select.Option>*!/*/}
-                                {/*</Select>*/}
-                            {/*)}*/}
-                        {/*</FormItem>*/}
-                    {/*</Col>*/}
+                    <Col className="gutter-row" md={12}>
+                        <FormItem
+                            {...formItemLayout}
+                            label="活动状态"
+                            hasFeedback
+                        >
+                            {getFieldDecorator('status', {
+                                initialValue:this.state.activity.status,
+                                rules: [{
+                                    required: true, message: '活动状态!',
+                                }],
+                            })(
+                                <Select>
+                                    {this.state.vals.map(d => <Select.Option key={d.code}>{d.name}</Select.Option>)}
+                                    {/*<Select.Option key={1}>有效</Select.Option>*/}
+                                    {/*<Select.Option key={0}>失效</Select.Option>*/}
+                                </Select>
+                            )}
+                        </FormItem>
+                    </Col>
                     <Col className="gutter-row" md={24}>
                         <FormItem
                             {...rowFormItemLayout}
@@ -226,6 +220,7 @@ class ActivityAddForms extends React.Component {
                             hasFeedback
                         >
                             {getFieldDecorator('remark', {
+                                initialValue:this.state.activity.remark,
                                 rules: [],
                             })(
                                 <TextArea placeholder="" autosize={{ minRows: 6, maxRows: 10 }} style={{ width: '100%' }} />
@@ -238,6 +233,14 @@ class ActivityAddForms extends React.Component {
                         <Link to={'/app/activity/list'}><Button>取消</Button></Link>
                         <Button type="primary" htmlType="submit" size={'default'} style={{marginLeft:20}}>确定</Button>
                     </FormItem>
+
+                    <FormItem>
+                        {getFieldDecorator('id', {
+                            initialValue: this.state.activity.id
+                        })(
+                            <Input type="hidden"/>
+                        )}
+                    </FormItem>
                 </Row>
             </Form>
             </Card>
@@ -245,4 +248,5 @@ class ActivityAddForms extends React.Component {
         )
     }
 }
+
 export default Form.create()(ActivityAddForms);
