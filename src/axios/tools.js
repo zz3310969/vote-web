@@ -29,3 +29,9 @@ export const post = ({url, data, msg = '接口异常', headers}) =>
         console.log(err);
         message.warn(msg);
     });
+
+export const get_ = ({url, msg = '接口异常'}) =>
+    axios.get(url).then(res => res.data).catch(err => {
+        console.log(err);
+        message.warn(msg);
+    });

@@ -20,8 +20,8 @@ class Login extends React.Component {
         if (nextAuth.data && nextAuth.data.state=='success') {   // 判断是否登陆
             let re = nextAuth.data.data;
             debugger;
-            localStorage.setItem('user', JSON.stringify(re.user));
-            localStorage.setItem('token',re.token.access_token);
+            sessionStorage.setItem('user', JSON.stringify(re.user));
+            sessionStorage.setItem('token',re.token.access_token);
             router.push('/');
         }
     }
