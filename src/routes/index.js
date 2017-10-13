@@ -53,7 +53,7 @@ export default class CRouter extends Component {
         return component;
     };
     loginAuth = (nextState, replace, next) => {
-        var user = localStorage.getItem('user');
+        var user = sessionStorage.getItem('user');
         if(user == null){
             replace('login');
             next();
