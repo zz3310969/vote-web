@@ -5,12 +5,11 @@ import { Link } from 'react-router';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {fetchData, receiveData} from '@/action';
-import { actbase,actsave,actload} from '../../axios';
+import { actbase,actupdate,actload} from '../../axios';
 
 import 'moment/locale/zh-cn';
 import moment from 'moment';
 const { MonthPicker, RangePicker } = DatePicker;
-
 /*活动管理新增*/
 
 const FormItem = Form.Item;
@@ -28,7 +27,6 @@ class ActivityAddForms extends React.Component {
         vote_range_date:[]
 
     };
-
     componentDidMount() {
         this.start({id:this.props.params.id});
     }
@@ -37,28 +35,24 @@ class ActivityAddForms extends React.Component {
         this.setState({loading: true});
         actload(parm).then(res => {
             console.log(res.data)
-            const sign_range_date = new Array();
-            sign_range_date[0] = moment(res.data.apply_start_time);
-            sign_range_date[1] = moment(res.data.apply_end_time);
-            // let vote_range_date = [];
-            // vote_range_date[0] = res.data.vote_start_time;
-            // vote_range_date[1] = res.data.vote_end_time;
-
-            console.log(sign_range_date);
-            // console.log(vote_range_date);
             this.setState({
-                activity : res.data,
-                sign_range_date :[moment(res.data.apply_start_time), moment(res.data.apply_end_time)] ,
-                // vote_range_date : vote_range_date,
+                activity : res.data.activity,
+                sign_range_date :[moment(res.data.activity.apply_start_time), moment(res.data.activity.apply_end_time)] ,
+                vote_range_date : [moment(res.data.activity.vote_start_time), moment(res.data.activity.vote_end_time)] ,
+                vals : res.data.vals,
                 loading: false
             });
         });
+    };
+    static contextTypes = {
+        router:React.PropTypes.object.isRequired
     };
     handleSubmit = (e) => {
         let submitValues = {};
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
-            if (!err) {
+            if (err) {
+            } else {
                 Object.assign(submitValues, values)
                 console.log(submitValues)
                 submitValues["apply_start_time"] = values["sign_range_date"][0].format('YYYY-MM-DD HH:mm:ss')
@@ -68,10 +62,9 @@ class ActivityAddForms extends React.Component {
                 const {dispatch} = this.props;
                 console.log(submitValues)
                 this.setState({loading: true});
-                actsave(submitValues).then(res => {
-                    this.setState({
-
-                        loading: false
+                actupdate(submitValues).then(res => {
+                    this.context.router.push({
+                        pathname: '/app/activity/activity'
                     });
                 });
             }
@@ -158,7 +151,7 @@ class ActivityAddForms extends React.Component {
                             hasFeedback
                         >
                             {getFieldDecorator('sign_range_date', {
-                                initialValue:this.state.activity.sign_range_date,
+                                initialValue:this.state.sign_range_date,
                                 rules: [{
                                     required: true, message: '请填写报名时间!',
                                 }],
@@ -174,7 +167,7 @@ class ActivityAddForms extends React.Component {
                             hasFeedback
                         >
                             {getFieldDecorator('vote_range_date', {
-                                initialValue:this.state.activity.vote_range_date,
+                                initialValue:this.state.vote_range_date,
                                 rules: [{
                                     required: true, message: '请填写投票时间!',
                                 }],
@@ -200,25 +193,26 @@ class ActivityAddForms extends React.Component {
                             )}
                         </FormItem>
                     </Col>
-                    {/*<Col className="gutter-row" md={12}>*/}
-                        {/*<FormItem*/}
-                            {/*{...formItemLayout}*/}
-                            {/*label="活动状态"*/}
-                            {/*hasFeedback*/}
-                        {/*>*/}
-                            {/*{getFieldDecorator('status', {*/}
-                                {/*rules: [{*/}
-                                    {/*required: true, message: '活动状态!',*/}
-                                {/*}],*/}
-                            {/*})(*/}
-                                {/*<Select>*/}
-                                    {/*{this.state.vals.map(d => <Select.Option key={d.code}>{d.name}</Select.Option>)}*/}
-                                    {/*/!*<Select.Option key={1}>有效</Select.Option>*!/*/}
-                                    {/*/!*<Select.Option key={0}>失效</Select.Option>*!/*/}
-                                {/*</Select>*/}
-                            {/*)}*/}
-                        {/*</FormItem>*/}
-                    {/*</Col>*/}
+                    <Col className="gutter-row" md={12}>
+                        <FormItem
+                            {...formItemLayout}
+                            label="活动状态"
+                            hasFeedback
+                        >
+                            {getFieldDecorator('status', {
+                                initialValue:this.state.activity.status,
+                                rules: [{
+                                    required: true, message: '活动状态!',
+                                }],
+                            })(
+                                <Select>
+                                    {this.state.vals.map(d => <Select.Option key={d.code}>{d.name}</Select.Option>)}
+                                    {/*<Select.Option key={1}>有效</Select.Option>*/}
+                                    {/*<Select.Option key={0}>失效</Select.Option>*/}
+                                </Select>
+                            )}
+                        </FormItem>
+                    </Col>
                     <Col className="gutter-row" md={24}>
                         <FormItem
                             {...rowFormItemLayout}
@@ -254,4 +248,5 @@ class ActivityAddForms extends React.Component {
         )
     }
 }
+
 export default Form.create()(ActivityAddForms);

@@ -113,7 +113,7 @@ class VoteStatisticsList extends React.Component {
         };
         return (
             <div className="gutter-example">
-                <BreadcrumbCustom first="投票信息" second="投票列表" />
+                <BreadcrumbCustom first="投票信息" second="投票统计" />
                 <Row gutter={16}>
                     <Col className="gutter-row" md={6}>
                         <FormItem

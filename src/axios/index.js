@@ -36,6 +36,20 @@ export const actsave = (params) => axios.post('/api/vote/activityAction/create.a
     console.log(error);
 });
 
+export const actupdate = (params) => axios.post('/api/vote/activityAction/update.action',params).then(function (response) {
+    return response.data;
+}).catch(function (error) {
+    console.log(error);
+});
+/** 投票 */
+export const votelist = (params) => axios.get('/api/vote/voteAction/list.action',{params:params}).then(function (response) {
+    console.log(response.data)
+    return response.data;
+}).catch(function (error) {
+    console.log(error);
+});
+
+
 export const getPros = () => axios.post('http://api.xitu.io/resources/github', {
     category: "trending",
     period: "day",

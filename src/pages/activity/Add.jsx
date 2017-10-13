@@ -41,6 +41,9 @@ class ActivityAddForms extends React.Component {
             });
         });
     };
+    static contextTypes = {
+        router:React.PropTypes.object.isRequired
+    };
     handleSubmit = (e) => {
         let submitValues = {};
         e.preventDefault();
@@ -56,8 +59,10 @@ class ActivityAddForms extends React.Component {
                 console.log(submitValues)
                 this.setState({loading: true});
                 actsave(submitValues).then(res => {
+                    this.context.router.push({
+                        pathname: '/app/activity/activity'
+                    });
                     this.setState({
-
                         loading: false
                     });
                 });
