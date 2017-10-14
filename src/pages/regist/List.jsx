@@ -2,36 +2,12 @@ import React from 'react';
 import {Card, Row, Col, Menu, Dropdown,Form,Table,Input,Button,Icon} from 'antd';
 import BreadcrumbCustom from '../../components/BreadcrumbCustom';
 import { Link } from 'react-router';
+import {getTableList,update} from '../../axios/vote'
 
 /*报名列表*/
 
 const FormItem = Form.Item;
 
-const data = [{
-    key: '1',
-    id:'1',
-    linkman: 'John Brown',
-    tel: 13388612507,
-    activity_name: 'sbsbbsb',
-    regist_name: 'Json',
-    user_state: '有效'
-},{
-    key: '2',
-    id:'2',
-    linkman: 'John Brown',
-    tel: 13388612507,
-    activity_name: 'sbsbbsb',
-    regist_name: 'Json',
-    user_state: '有效'
-},{
-    key: '4',
-    id:'3',
-    linkman: 'John Brown',
-    tel: 13388612507,
-    activity_name: 'sbsbbsb',
-    regist_name: 'Json',
-    user_state: '有效'
-}];
 
 class RegistList extends React.Component {
     state = {
@@ -40,60 +16,96 @@ class RegistList extends React.Component {
         iconLoading: false,
     };
 
-    // handleSizeChange = (e) => {
-    //     this.setState({ size: e.target.value });
-    // };
-    // handleMenuClick = (e) => {
-    //     console.log('click', e);
-    // };
-    // enterLoading = () => {
-    //     this.setState({ loading: true });
-    // };
-    // enterIconLoading = () => {
-    //     this.setState({ iconLoading: true });
-    // };
-    searchHandle = () => {
-        //搜索事件
 
+
+    componentDidMount() {
+        const queryParams = this.props.location.query;
+        this.start(queryParams);
     }
+
+
+
+    start = (parms) => {
+        this.setState({ loading: true });
+        getTableList('/api/vote/activityuserAction/list.action',parms).then(res => {
+            const pagination = { ...this.state.pagination };
+            pagination.total = res.data.total;
+            this.setState({
+                data: [...res.data.dataList.map(val => {
+                    val.key = val.id;
+                    return val;
+                })],
+                pagination,
+                loading: false
+            });
+        });
+    };
+
+    handleTableChange = (pagination, filters, sorter) => {
+        const pager = { ...this.state.pagination };
+        pager.current = pagination.current;
+        this.setState({
+            pagination: pager,
+        });
+
+        let submitValues = {...this.props.form.getFieldsValue()}
+        submitValues.currentPage= pagination.current;
+        this.setState({loading: true});
+        this.start(submitValues);
+    }
+
+    handleSubmit = (e) => {
+        let submitValues = {};
+        e.preventDefault();
+        this.props.form.validateFields((err, values) => {
+            if (!err) {
+                Object.assign(submitValues, values)
+                this.setState({loading: true});
+                this.start(submitValues);
+            }
+        });
+    };
+
+
     render() {
 
         const columns = [{
             title: '报名联系人',
-            dataIndex: 'linkman',
-            key: 'linkman'
+            dataIndex: 'name',
+            key: 'name'
         }, {
             title: '联系电话',
             dataIndex: 'tel',
             key: 'tel',
         }, {
             title: '活动名称',
-            dataIndex: 'activity_name',
-            key: 'activity_name',
-        }, {
-            title: '报名人',
-            dataIndex: 'regist_name',
-            key: 'regist_name',
-        }, {
-            title: '用户状态',
-            dataIndex: 'user_state',
-            key: 'user_state',
+            dataIndex: 'actName',
+            key: 'actName',
         }, {
             title: '',
             dataIndex: 'operation',
             key: 'operation',
             width:100,
             render:function(text,record,index){
-                const linkUrl = '/app/auditing/list?user_id='+record.id+"&username="+record.linkman
+                const linkUrl = '/app/auditing/list?user_id='+record.id+"&username="+record.name
                 return (
                     <Link to={linkUrl} ><Icon type="link" />查看作品</Link>
                 )
             }
         }];
 
+        const tableProps = {
+            columns: columns,
+            rowKey: record => record.id,
+            dataSource: this.state.data,
+            pagination: this.state.pagination,
+            loading: this.state.loading,
+            onChange: this.handleTableChange,
+        };
+
 
         const RegistTable = () => (
-            <Table columns={columns} dataSource={data} />
+            <Table {...tableProps} />
         );
 
 
@@ -112,13 +124,14 @@ class RegistList extends React.Component {
         return (
             <div className="gutter-example">
                 <BreadcrumbCustom first="报名信息" second="报名列表" />
+                <Form layout='horizontal' onSubmit={this.handleSubmit} style={{marginTop: 20}}>
                 <Row gutter={16}>
                     <Col className="gutter-row" md={6}>
                         <FormItem
                             {...formItemLayout}
                             label="联系人"
                         >
-                            {getFieldDecorator('linkman', {
+                            {getFieldDecorator('name', {
                                 rules: [],
                             })(
                                 <Input />
@@ -130,19 +143,20 @@ class RegistList extends React.Component {
                             {...formItemLayout}
                             label="活动名称"
                         >
-                            {getFieldDecorator('activity_name', {
+                            {getFieldDecorator('actName', {
                                 rules: [],
                             })(
                                 <Input />
                             )}
                         </FormItem>
                     </Col>
-                    <Col className="gutter-row" md={3}>
-                        <Button onClick={this.searchHandle} >搜索</Button>
+                    <Col className="gutter-row" md={2}>
+                        <Button type='primary' htmlType="submit">搜索</Button>
                     </Col>
                     <Col className="gutter-row" md={6}>
                     </Col>
                 </Row>
+                </Form>
                 <Card bordered={false} >
                 <Row>
                     <Col span={24}>

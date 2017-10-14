@@ -155,11 +155,6 @@ class AuditingList extends React.Component {
             }
         }];
 
-        const pagination = {
-            total: this.state.total,
-            showTotal: total => `共 ${total} 项`,
-            pageSize: 10
-        };
 
         const tableProps = {
             columns: columns,
