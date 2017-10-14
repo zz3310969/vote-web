@@ -131,10 +131,10 @@ class SiderCustom extends Component {
                         key="/app/activity"
                         title={<span><Icon type="switcher" /><span className="nav-text">活动配置</span></span>}
                     >
-                        <Menu.Item key="/app/activity/list"><Link to={'/app/activity/list'}>活动</Link></Menu.Item>
-                        <Menu.Item key="/app/auditing/list"><Link to={'/app/auditing/list'}>审计</Link></Menu.Item>
-                        <Menu.Item key="/app/regist/list"><Link to={'/app/regist/list'}>注册</Link></Menu.Item>
-                        <Menu.Item key="/app/vote/list"><Link to={'/app/vote/list'}>投票</Link></Menu.Item>
+                        <Menu.Item key="/app/activity/list"><Link to={'/app/activity/list'}>活动管理</Link></Menu.Item>
+                        <Menu.Item key="/app/auditing/list"><Link to={'/app/auditing/list'}>作品审核</Link></Menu.Item>
+                        <Menu.Item key="/app/regist/list"><Link to={'/app/regist/list'}>报名信息</Link></Menu.Item>
+                        <Menu.Item key="/app/vote/list"><Link to={'/app/vote/list'}>投票记录</Link></Menu.Item>
                         {/*<Menu.Item key="/app/vote/statisticall"><Link to={'/app/vote/statisticall'}>投票统计</Link></Menu.Item>*/}
                     </SubMenu>
 
