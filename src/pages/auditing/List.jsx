@@ -29,7 +29,9 @@ class AuditingList extends React.Component {
 
     componentDidMount() {
         this.load();
-        this.start();
+        const queryParams = this.props.location.query;
+        this.start(queryParams);
+        this.props.form.setFieldsValue({username:queryParams["username"]})
     }
 
     load = () => {
@@ -87,7 +89,6 @@ class AuditingList extends React.Component {
             title: '确定撤销已审核通过的作品?',
             content: '确定后，作品将变成审核未通过!',
             onOk() {
-              console.log('OK');
               let submitValues = {};
                 submitValues.id = worksId;
                 submitValues.status = 'managecancel';
@@ -199,7 +200,7 @@ class AuditingList extends React.Component {
                             {getFieldDecorator('name', {
                                 rules: [],
                             })(
-                                <Input />
+                                <Input size='default'/>
                             )}
                         </FormItem>
                     </Col>
@@ -211,7 +212,7 @@ class AuditingList extends React.Component {
                             {getFieldDecorator('actName', {
                                 rules: [],
                             })(
-                                <Input />
+                                <Input size='default' />
                             )}
                         </FormItem>
                     </Col>
@@ -223,7 +224,7 @@ class AuditingList extends React.Component {
                             {getFieldDecorator('username', {
                                 rules: [],
                             })(
-                                <Input />
+                                <Input size='default' />
                             )}
                         </FormItem>
                     </Col>
@@ -235,7 +236,7 @@ class AuditingList extends React.Component {
                             {getFieldDecorator('status', {
                                 rules: [],
                             })(
-                              <Select style={{width:'100%'}}>
+                              <Select style={{width:'100%'}}  size='default'>
                                 {this.state.auditState.map(item => <Select.Option key={item.value}>{item.text}</Select.Option>)}
                               </Select>
                             )}
