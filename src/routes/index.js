@@ -122,7 +122,7 @@ export default class CRouter extends Component {
                         </Route>
                         <Route path={'vote'}>
                             <Route  path={"list"} components={VoteList} />
-                            <Route  path={"statistic"} components={VoteStatisticsList} />
+                            <Route  path={"statistic/:code"} components={VoteStatisticsList} />
                             <Route  path={"statisticall"} components={VoteStatisticsListAll} />
                         </Route>
                     </Route>
