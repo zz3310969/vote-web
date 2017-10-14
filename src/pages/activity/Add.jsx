@@ -158,13 +158,15 @@ class ActivityAddForms extends React.Component {
                             {...formItemLayout}
                             label="报名时间"
                             hasFeedback
+                            
                         >
                             {getFieldDecorator('sign_range_date', {
                                 rules: [{
                                     required: true, message: '请填写报名时间!',
                                 }],
                             })(
-                                <RangePicker style={{ width: '100%' }}/>
+                                <RangePicker style={{ width: '100%' }} showTime={{ format: 'HH:mm' }}
+                            format="YYYY-MM-DD HH:mm"/>
                             )}
                         </FormItem>
                     </Col>
@@ -179,7 +181,8 @@ class ActivityAddForms extends React.Component {
                                     required: true, message: '请填写投票时间!',
                                 }],
                             })(
-                                <RangePicker style={{ width: '100%' }}/>
+                                <RangePicker style={{ width: '100%' }}  showTime={{ format: 'HH:mm' }}
+                            format="YYYY-MM-DD HH:mm"/>
                             )}
                         </FormItem>
                     </Col>

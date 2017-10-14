@@ -60,12 +60,12 @@ const columns = [{
     title: '统计视图',
     dataIndex: 'operator1',
     key: 'operator1',
-    width: 80,
+    width: 100,
     render: function (text, record, index) {
         const linkUrl1 = '/app/vote/statistic/' + record.code
         return (
             <div style={{textAlign: 'right', paddingRight: 20}}>
-                <Link to={linkUrl1}><Icon type="edit"/>投票统计</Link>
+                <Link to={linkUrl1}><Icon type="bar-chart"/>投票统计</Link>
             </div>
         )
     }
