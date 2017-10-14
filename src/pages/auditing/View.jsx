@@ -35,14 +35,13 @@ class AuditingViewForms extends React.Component {
     start = (parm) => {
         this.setState({loading: true});
         load("/api/vote/productionAction/load.action",parm).then(res => {
-            // console.log(res.data)
-            return false
+
             const fileList = this.state.fileList;
             var image ={};
             image.uid=-1;
             image.name=res.data.name;
             image.status='done';
-            image.url='/api/selin/fileAction/getFile.action?filename='+res.data.img_src;
+            image.url='/api/vote/wechat/fileAction/getFile.action?filename='+res.data.img_src;
             fileList.push(image);
             this.setState({
                 production : res.data,
@@ -76,7 +75,7 @@ class AuditingViewForms extends React.Component {
 
                 console.log(submitValues)
                 this.setState({loading: true});
-                update("/api/vote/productionAction/update.action",submitValues).then(res => {
+                update("/api/vote/productionAction/audit.action",submitValues).then(res => {
                     this.context.router.push({
                         pathname: '/app/auditing/list'
                     });
@@ -245,7 +244,7 @@ class AuditingViewForms extends React.Component {
                             )}
                         </FormItem>
                     </Col>
-                    <Col className="gutter-row" md={12} >
+                    <Col className="gutter-row" md={this.state.optype==2?12:0} >
                         <FormItem
                             {...formItemLayout}
                             label="审核意见"
@@ -262,7 +261,9 @@ class AuditingViewForms extends React.Component {
                     </Col>
                 </Row>
                 <FormItem {...tailFormItemLayout}>
-                    <Link to={'/app/auditing/list'}><Button>取消</Button></Link>
+                    {
+                        this.state.optype==2? <Link to={'/app/auditing/list'}><Button>取消</Button></Link>:''
+                    }
                     {
                         this.state.optype==2?
                         <Button type="primary" htmlType="submit" size={'default'} style={{marginLeft:20}}>确定</Button>

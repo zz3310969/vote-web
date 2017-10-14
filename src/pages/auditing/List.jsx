@@ -148,7 +148,7 @@ class AuditingList extends React.Component {
                 return (<span>{viewButton}{rollbackButton}</span>)
               }else if(record.status=='waitProcess'){
                 return (<span>{viewButton}{auditButton}</span>)
-              }else if(record.status=='waitProcess'){
+              }else if(record.status){
                 return (<span>{viewButton}</span>)
               }
             }
@@ -208,7 +208,7 @@ class AuditingList extends React.Component {
                             {...formItemLayout}
                             label="所属活动"
                         >
-                            {getFieldDecorator('activity_name', {
+                            {getFieldDecorator('actName', {
                                 rules: [],
                             })(
                                 <Input />

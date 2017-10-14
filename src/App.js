@@ -49,7 +49,7 @@ class App extends Component {
                   {this.props.children}
                 </Content>
                 <Footer style={{ textAlign: 'center' }}>
-                  React-Admin ©2017 Created
+                    投票后台管理系统 ©2017
                 </Footer>
               </Layout>
                 {
