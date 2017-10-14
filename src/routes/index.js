@@ -38,6 +38,7 @@ import AuditingView from '../pages/auditing/View';
 import VoteList from '../pages/vote/List';
 import VoteStatisticsList from '../pages/vote/Statistic';
 import ActivityUpdate from '../pages/activity/Update';
+import VoteStatisticsListAll from '../pages/vote/StatisticList';
 
 
 
@@ -104,7 +105,6 @@ export default class CRouter extends Component {
                             <Route path="routerEnter" component={(props) => this.requireAuth('auth/testPage', <RouterEnter {...props} />)} />
                         </Route>
 
-
                         {/* 投票管理系统*/}
                         <Route path={'activity'}>
                             <Route  path={"list"} components={ActivityList} />
@@ -123,12 +123,10 @@ export default class CRouter extends Component {
                         <Route path={'vote'}>
                             <Route  path={"list"} components={VoteList} />
                             <Route  path={"statistic"} components={VoteStatisticsList} />
+                            <Route  path={"statisticall"} components={VoteStatisticsListAll} />
                         </Route>
                     </Route>
                     <Route path={'404'} component={NotFound} />
-
-
-
                 </Route>
                 <Route path={'login'} components={Login} />
 
