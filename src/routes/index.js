@@ -33,6 +33,8 @@ import ActivityAdd from '../pages/activity/Add';
 import RegistList from '../pages/regist/List';
 import RegistView from '../pages/regist/View';
 import AuditingList from '../pages/auditing/List';
+import AuditingView from '../pages/auditing/View';
+
 import VoteList from '../pages/vote/List';
 import VoteStatisticsList from '../pages/vote/Statistic';
 import ActivityUpdate from '../pages/activity/Update';
@@ -111,10 +113,12 @@ export default class CRouter extends Component {
                         </Route>
                         <Route path={'regist'}>
                             <Route  path={"list"} components={RegistList} />
-                            <Route  path={"view"} components={RegistView} />
+                            <Route  path={"view/:id"} components={RegistView} />
                         </Route>
                         <Route path={'auditing'}>
                             <Route  path={"list"} components={AuditingList} />
+                            <Route  path={"view/:id"} components={AuditingView} />
+
                         </Route>
                         <Route path={'vote'}>
                             <Route  path={"list"} components={VoteList} />

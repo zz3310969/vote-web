@@ -26,3 +26,18 @@ export const getTableList = (url,params) => axios.get(url, {params:params}).then
     
     console.log(error);
 });
+
+export const load = (url,params) => axios.get(url, {params:params}).then(function (response) {
+    return response.data;
+}).catch(function (error) {
+
+    console.log(error);
+});
+
+
+export const update = (url,params) => axios.post(url, params).then(function (response) {
+    return response.data;
+}).catch(function (error) {
+
+    console.log(error);
+});

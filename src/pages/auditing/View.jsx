@@ -3,7 +3,7 @@ import { Card, Form, Input, Tooltip, Icon, Cascader, Select, Row, Col, Checkbox,
 import BreadcrumbCustom from '../../components/BreadcrumbCustom';
 import { Link } from "react-router";
 import moment from 'moment';
-import {load} from '../../axios/vote'
+import {load,update} from '../../axios/vote'
 
 const { MonthPicker, RangePicker } = DatePicker;
 
@@ -13,32 +13,20 @@ const FormItem = Form.Item;
 const Option = Select.Option;
 const { TextArea } = Input;
 
-class RegistViewForms extends React.Component {
+class AuditingViewForms extends React.Component {
+
+
+    constructor(props) {
+        super(props);
+
+    }
     state = {
         previewVisible: false,
         previewImage: '',
         production:{},
         fileList: [],
+        optype:1||this.props.location.query.optype,
       };
-    // handleSubmit = (e) => {
-    //     e.preventDefault();
-    //     this.props.form.validateFieldsAndScroll((err, values) => {
-    //         if (!err) {
-    //             console.log('Received values of form: ', values);
-    //         }
-    //     });
-    // };
-    // handleConfirmBlur = (e) => {
-    //     const value = e.target.value;
-    //     this.setState({ confirmDirty: this.state.confirmDirty || !!value });
-    // };
-    // checkConfirm = (rule, value, callback) => {
-    //     const form = this.props.form;
-    //     if (value && this.state.confirmDirty) {
-    //         form.validateFields(['confirm'], { force: true });
-    //     }
-    //     callback();
-    // };
 
     componentDidMount() {
         this.start({id:this.props.params.id});
@@ -71,6 +59,31 @@ class RegistViewForms extends React.Component {
           previewVisible: true,
         });
     };
+
+    static contextTypes = {
+        router:React.PropTypes.object.isRequired
+    };
+
+    handleSubmit = (e) => {
+        let submitValues = {};
+        e.preventDefault();
+        this.props.form.validateFields((err, values) => {
+            if (err) {
+            } else {
+                Object.assign(submitValues, values)
+                console.log(submitValues)
+
+                console.log(submitValues)
+                this.setState({loading: true});
+                update("/api/vote/productionAction/update.action",submitValues).then(res => {
+                    this.context.router.push({
+                        pathname: '/app/auditing/list'
+                    });
+                });
+            }
+        });
+    };
+
     render() {
         const { getFieldDecorator } = this.props.form;
         const formItemLayout = {
@@ -111,7 +124,7 @@ class RegistViewForms extends React.Component {
         return (
         <div className="gutter-example">
             <BreadcrumbCustom first="报名信息" second="作品查看" />
-            <Card title="作品信息" bordered={false} extra={<Link to={'/app/regist/list'}><Button>返回</Button></Link>}>
+            <Card title="作品信息" bordered={false} extra={<Link to={'/app/auditing/list'}><Button>返回</Button></Link>}>
             <Form onSubmit={this.handleSubmit}>
                 <Row>
                     <Col className="gutter-row" md={24}>
@@ -158,7 +171,7 @@ class RegistViewForms extends React.Component {
                             {...formItemLayout}
                             label="作品状态"
                         >
-                            {getFieldDecorator('works_states', {
+                            {getFieldDecorator('statusName', {
                                 initialValue:this.state.production.proStatusName,
                                 rules: [],
                             })(
@@ -231,19 +244,35 @@ class RegistViewForms extends React.Component {
                             )}
                         </FormItem>
                     </Col>
-                    <Col className="gutter-row" md={12}>
+                    <Col className="gutter-row" md={12} >
                         <FormItem
                             {...formItemLayout}
                             label="审核意见"
                         >
-                            {getFieldDecorator('audit_comments', {
-                                rules: [],
+                            {getFieldDecorator('status', {
+                                rules: [{ required: true, message: '请选择审核意见!' }],
                             })(
-                                <TextArea disabled={true}></TextArea>
+                                <Select >
+                                    <Select.Option key="processed">审核通过</Select.Option>
+                                    <Select.Option key="managecancel">审核不通过作废</Select.Option>
+                                </Select>
                             )}
                         </FormItem>
                     </Col>
                 </Row>
+                <FormItem {...tailFormItemLayout}>
+                    <Link to={'/app/auditing/list'}><Button>取消</Button></Link>
+                    <Button type="primary" htmlType="submit" size={'default'} style={{marginLeft:20}}>确定</Button>
+                </FormItem>
+
+                <FormItem>
+                    {getFieldDecorator('id', {
+                        initialValue: this.state.production.id
+                    })(
+                        <Input type="hidden"/>
+                    )}
+                </FormItem>
+
             </Form>
             </Card>
         </div>
@@ -252,4 +281,4 @@ class RegistViewForms extends React.Component {
 }
 
 
-export default Form.create()(RegistViewForms);
+export default Form.create()(AuditingViewForms);

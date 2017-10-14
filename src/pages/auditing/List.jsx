@@ -2,7 +2,7 @@ import React from 'react';
 import {Card, Row, Col, Menu, Dropdown,Form,Table,Input,Button,Icon,Select,Badge,Modal} from 'antd';
 import BreadcrumbCustom from '../../components/BreadcrumbCustom';
 import { Link } from 'react-router';
-import {getTableList} from '../../axios/vote'
+import {getTableList,update} from '../../axios/vote'
 import {get_} from '../../axios/tools'
 
 
@@ -82,11 +82,20 @@ class AuditingList extends React.Component {
     };
 
     rollbackAudit = (worksId) => {
+        var self = this;
         Modal.confirm({
             title: '确定撤销已审核通过的作品?',
             content: '确定后，作品将变成审核未通过!',
             onOk() {
               console.log('OK');
+              let submitValues = {};
+                submitValues.id = worksId;
+                submitValues.status = 'managecancel';
+                update("/api/vote/productionAction/update.action",submitValues).then(res => {
+                    let submitValues = {...self.props.form.getFieldsValue()}
+                    self.setState({loading: true});
+                    self.start(submitValues);
+                });
             },
             onCancel() {
               
@@ -121,9 +130,9 @@ class AuditingList extends React.Component {
             key: 'update_date',
         }, {
             title: '状态',
-            dataIndex: 'statusName',
+            dataIndex: 'proStatusName',
             width:100,
-            key: 'statusName',
+            key: 'proStatusName',
 
         }, {
             title: '',
@@ -131,9 +140,9 @@ class AuditingList extends React.Component {
             key: 'operator',
             width:160,
             render:function(text,record,index){
-              const viewButton = (<Link to={'/app/regist/view/'+record.id+"&back="}  style={{marginRight:20}}>查看</Link>);
+              const viewButton = (<Link to={'/app/auditing/view/'+record.id+"?optype=1"}  style={{marginRight:20}}>查看</Link>);
               const rollbackButton = (<span onClick={()=>self.rollbackAudit(record.id)}>撤销审核</span>);
-              const auditButton = (<Link to={'/app/regist/view/'+record.id}>作品审核</Link>);
+              const auditButton = (<Link to={'/app/auditing/view/'+record.id+"?optype=2"}>作品审核</Link>);
 
               if(record.status=='processed'){
                 return (<span>{viewButton}{rollbackButton}</span>)
@@ -178,7 +187,7 @@ class AuditingList extends React.Component {
         };
         return (
             <div className="gutter-example">
-                <BreadcrumbCustom first="作品信息" second="作品列表" />
+                <BreadcrumbCustom first="活动配置" second="审计列表" />
                 <Row gutter={16}>
                     <Form layout='horizontal' onSubmit={this.handleSubmit} style={{marginTop: 20}}>
 
