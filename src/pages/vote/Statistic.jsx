@@ -2,6 +2,8 @@ import React from 'react';
 import {Row, Col,Table,Input,Button,Icon,DatePicker,Form,Card,} from 'antd';
 import BreadcrumbCustom from '../../components/BreadcrumbCustom';
 import { Link } from 'react-router';
+import { votereport} from '../../axios';
+
 const { MonthPicker, RangePicker } = DatePicker;
 
 
@@ -11,92 +13,68 @@ const FormItem = Form.Item;
 
 
 
-const data = [{
-    key: '1',
-    id:'1',
-    rank:'第一名',
-    works_name:'作品1',
-    vote_num:'000001',
-    works_linkman: 'John Brown',
-    linkman_tel: 13388612507,
-    vote_total: 3,
-    activity_name:'首届南宋皇城小镇创意设计大赛暨旅游纪念品设计大赛'
-},{
-    key: '2',
-    id:'2',
-    rank:'第二名',
-    works_name:'作品13',
-    vote_num:'000002',
-    works_linkman: 'John Brown',
-    linkman_tel: 13388612507,
-    vote_total: 23,
-    activity_name:'首届南宋皇城小镇创意设计大赛暨旅游纪念品设计大赛'
-},{
-    key: '3',
-    id:'3',
-    rank:'第三名',
-    works_name:'作品31',
-    vote_num:'000003',
-    works_linkman: 'John Brown',
-    linkman_tel: 13388612507,
-    vote_total: 4334,
-    activity_name:'首届南宋皇城小镇创意设计大赛暨旅游纪念品设计大赛'
-},{
-    key: '4',
-    id:'4',
-    rank:'第四名',
-    works_name:'作品41',
-    vote_num:'000005',
-    works_linkman: 'John Brown',
-    linkman_tel: 13388612507,
-    vote_total: 77,
-    activity_name:'首届南宋皇城小镇创意设计大赛暨旅游纪念品设计大赛'
-}];
-
 class VoteStatisticsList extends React.Component {
     state = {
         size: 'default',
         loading: false,
         iconLoading: false,
+        data: []
     };
-    searchHandle = () => {
-      //搜索事件
+    componentDidMount() {
+        this.start({acode:this.props.params.code});
+    }
+
+    start = (parm) => {
+        this.setState({loading: true});
+        votereport(parm).then(res => {
+            console.log(res.data)
+            this.setState({
+                data: [...res.data.map(val => {
+                    val.key = val.id;
+                    return val;
+                })],
+                loading: false
+            });
+        });
     };
     render() {
         const self = this;
         const columns = [{
             title: '排名',
-            dataIndex: 'rank',
-            key: 'rank'
+            dataIndex: 'index',
+            key: 'index',
+            render: function(text, record, index) {
+                return "第"+record.index+"名";
+            }
         },{
             title: '作品名称',
-            dataIndex: 'works_name',
-            key: 'works_name'
+            dataIndex: 'name',
+            key: 'name'
         }, {
             title: '投票编号',
-            dataIndex: 'vote_num',
-            key: 'vote_num'
+            dataIndex: 'vote_code',
+            key: 'vote_code'
         }, {
             title: '作品联系人',
-            dataIndex: 'works_linkman',
-            key: 'works_linkman'
+            dataIndex: 'username',
+            key: 'username'
         }, {
             title: '联系电话',
-            dataIndex: 'linkman_tel',
-            key: 'linkman_tel',
+            dataIndex: 'usertel',
+            key: 'usertel',
         }, {
             title: '总票数',
-            dataIndex: 'vote_total',
-            key: 'vote_total',
+            dataIndex: 'num',
+            key: 'num',
         }, {
             title: '所属活动',
-            dataIndex: 'activity_name',
-            key: 'activity_name',
+            dataIndex: 'actName',
+            key: 'actName',
             width:200
         }];
 
         const VoteTable = () => (
-            <Table columns={columns} dataSource={data} />
+            <Table columns={columns} dataSource={this.state.data} />
         );
 
         const size = this.state.size;
@@ -113,63 +91,63 @@ class VoteStatisticsList extends React.Component {
         };
         return (
             <div className="gutter-example">
-                <BreadcrumbCustom first="投票信息" second="投票统计" />
-                <Row gutter={16}>
-                    <Col className="gutter-row" md={6}>
-                        <FormItem
-                            {...formItemLayout}
-                            label="作品名称"
-                        >
-                            {getFieldDecorator('works_name', {
-                                rules: [],
-                            })(
-                                <Input />
-                            )}
-                        </FormItem>
-                    </Col>
-                    <Col className="gutter-row" md={6}>
-                        <FormItem
-                            {...formItemLayout}
-                            label="活动名称"
-                        >
-                            {getFieldDecorator('activity_name', {
-                                rules: [],
-                            })(
-                                <Input />
-                            )}
-                        </FormItem>
-                    </Col>
-                </Row>
-                <Row  gutter={16}>
-                    <Col className="gutter-row" md={6}>
-                        <FormItem
-                            {...formItemLayout}
-                            label="投票编号"
-                        >
-                            {getFieldDecorator('vote_num', {
-                                rules: [],
-                            })(
-                                <Input />
-                            )}
-                        </FormItem>
-                    </Col>
-                    <Col className="gutter-row" md={6}>
-                        <FormItem
-                            {...formItemLayout}
-                            label="投票日期"
-                        >
-                            {getFieldDecorator('audit_state', {
-                                rules: [],
-                            })(
-                              <RangePicker />
-                            )}
-                        </FormItem>
-                    </Col>
-                    <Col className="gutter-row" md={4}>
-                        <Button onClick={this.clearHandle} type="danger">清空</Button>
-                        <Button onClick={this.searchHandle} type="primary">搜索</Button>
-                    </Col>
-                </Row>
+                <BreadcrumbCustom first="投票信息" second="活动投票统计排名" />
+                {/*<Row gutter={16}>*/}
+                    {/*<Col className="gutter-row" md={6}>*/}
+                        {/*<FormItem*/}
+                            {/*{...formItemLayout}*/}
+                            {/*label="作品名称"*/}
+                        {/*>*/}
+                            {/*{getFieldDecorator('works_name', {*/}
+                                {/*rules: [],*/}
+                            {/*})(*/}
+                                {/*<Input />*/}
+                            {/*)}*/}
+                        {/*</FormItem>*/}
+                    {/*</Col>*/}
+                    {/*<Col className="gutter-row" md={6}>*/}
+                        {/*<FormItem*/}
+                            {/*{...formItemLayout}*/}
+                            {/*label="活动名称"*/}
+                        {/*>*/}
+                            {/*{getFieldDecorator('activity_name', {*/}
+                                {/*rules: [],*/}
+                            {/*})(*/}
+                                {/*<Input />*/}
+                            {/*)}*/}
+                        {/*</FormItem>*/}
+                    {/*</Col>*/}
+                {/*</Row>*/}
+                {/*<Row  gutter={16}>*/}
+                    {/*<Col className="gutter-row" md={6}>*/}
+                        {/*<FormItem*/}
+                            {/*{...formItemLayout}*/}
+                            {/*label="投票编号"*/}
+                        {/*>*/}
+                            {/*{getFieldDecorator('vote_num', {*/}
+                                {/*rules: [],*/}
+                            {/*})(*/}
+                                {/*<Input />*/}
+                            {/*)}*/}
+                        {/*</FormItem>*/}
+                    {/*</Col>*/}
+                    {/*<Col className="gutter-row" md={6}>*/}
+                        {/*<FormItem*/}
+                            {/*{...formItemLayout}*/}
+                            {/*label="投票日期"*/}
+                        {/*>*/}
+                            {/*{getFieldDecorator('audit_state', {*/}
+                                {/*rules: [],*/}
+                            {/*})(*/}
+                              {/*<RangePicker />*/}
+                            {/*)}*/}
+                        {/*</FormItem>*/}
+                    {/*</Col>*/}
+                    {/*<Col className="gutter-row" md={4}>*/}
+                        {/*<Button onClick={this.clearHandle} type="danger">清空</Button>*/}
+                        {/*<Button onClick={this.searchHandle} type="primary">搜索</Button>*/}
+                    {/*</Col>*/}
+                {/*</Row>*/}
                 <Card bordered={false} >
                     <Row>
                         <Col span={24}>

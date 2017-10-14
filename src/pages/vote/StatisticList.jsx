@@ -2,28 +2,23 @@ import React from 'react';
 import {Row, Col,Table,Input,Button,Icon,DatePicker,Form,Card,} from 'antd';
 import BreadcrumbCustom from '../../components/BreadcrumbCustom';
 import { Link } from 'react-router';
-import { votelist} from '../../axios';
+import { votereport} from '../../axios';
 
 const { MonthPicker, RangePicker } = DatePicker;
-/*投票结果列表*/
+
+
+/*投票统计列表*/
+
 const FormItem = Form.Item;
-class VoteList extends React.Component {
+
+
+
+class VoteStatisticsListAll extends React.Component {
     state = {
-        from_query: {
-            proName: '',
-            actName:'',
-            vote_code:'',
-            vote_start_date :'',
-            vote_end_date :'',
-            currentPage: 1,
-            limit: 10
-        },
         size: 'default',
         loading: false,
         iconLoading: false,
-        data: []
     };
-
     componentDidMount() {
         this.start(this.state.from_query);
     }
@@ -31,10 +26,10 @@ class VoteList extends React.Component {
     start = (parm) => {
         this.setState({loading: true});
 
-        votelist(parm).then(res => {
+        votereport(parm).then(res => {
             console.log(res.data)
             this.setState({
-                data: [...res.data.dataList.map(val => {
+                data: [...res.data.map(val => {
                     val.key = val.id;
                     return val;
                 })],
@@ -42,57 +37,40 @@ class VoteList extends React.Component {
             });
         });
     };
-
-    handleSubmit = (e) => {
-        let submitValues = {};
-        e.preventDefault();
-        this.props.form.validateFields((err, values) => {
-            if (!err) {
-                Object.assign(submitValues, values)
-                const {dispatch} = this.props;
-                this.setState({loading: true});
-                votelist(submitValues).then(res => {
-                    this.setState({
-                        data: [...res.data.dataList.map(val => {
-                            val.key = val.id;
-                            return val;
-                        })],
-                        loading: false
-                    });
-                });
-            }
-        });
-    };
     render() {
         const self = this;
         const columns = [{
+            title: '排名',
+            dataIndex: 'index',
+            key: 'index',
+            render: function(text, record, index) {
+                return "第"+record.index+"名";
+            }
+        },{
             title: '作品名称',
-            dataIndex: 'proName',
-            key: 'proName'
+            dataIndex: 'name',
+            key: 'name'
         }, {
             title: '投票编号',
             dataIndex: 'vote_code',
             key: 'vote_code'
         }, {
             title: '作品联系人',
-            dataIndex: 'proUserName',
-            key: 'proUserName'
+            dataIndex: 'user_id',
+            key: 'user_id'
         }, {
             title: '联系电话',
-            dataIndex: 'proUserTel',
-            key: 'proUserTel',
+            dataIndex: 'user_id',
+            key: 'user_id1',
         }, {
-            title: '投票人',
-            dataIndex: 'vote_user_openid',
-            key: 'vote_user_openid',
+            title: '总票数',
+            dataIndex: 'num',
+            key: 'num',
         }, {
-            title: '投票数',
-            dataIndex: 'vote_num',
-            key: 'vote_num',
-        }, {
-            title: '投票时间',
-            dataIndex: 'vote_date',
-            key: 'vote_date'
+            title: '所属活动',
+            dataIndex: 'actName',
+            key: 'actName',
+            width:200
         }];
 
         const VoteTable = () => (
@@ -113,7 +91,7 @@ class VoteList extends React.Component {
         };
         return (
             <div className="gutter-example">
-                <BreadcrumbCustom first="投票信息" second="投票列表" />
+                <BreadcrumbCustom first="投票信息" second="投票统计" />
                 <Row gutter={16}>
                     <Col className="gutter-row" md={6}>
                         <FormItem
@@ -182,4 +160,4 @@ class VoteList extends React.Component {
     }
 }
 
-export default Form.create()(VoteList);
+export default Form.create()(VoteStatisticsListAll);

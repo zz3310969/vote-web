@@ -43,15 +43,29 @@ const columns = [{
     dataIndex: 'vote_limit',
     key: 'vote_limit',
 }, {
-    title: '',
+    title: '操作',
     dataIndex: 'operator',
     key: 'operator',
     width: 80,
     render: function (text, record, index) {
         const linkUrl = '/app/activity/update/' + record.id
+        const linkUrl1 = '/app/vote/statistic/' + record.code
         return (
             <div style={{textAlign: 'right', paddingRight: 20}}>
                 <Link to={linkUrl}><Icon type="edit"/>修改</Link>
+            </div>
+        )
+    }
+},{
+    title: '统计视图',
+    dataIndex: 'operator1',
+    key: 'operator1',
+    width: 80,
+    render: function (text, record, index) {
+        const linkUrl1 = '/app/vote/statistic/' + record.code
+        return (
+            <div style={{textAlign: 'right', paddingRight: 20}}>
+                <Link to={linkUrl1}><Icon type="edit"/>投票统计</Link>
             </div>
         )
     }
@@ -75,7 +89,7 @@ class ActivityList extends React.Component {
     }
 
     start = (parm) => {
-        this.setState({loading: true});
+        this.setState({ loading: true });
         actlist(parm).then(res => {
             this.setState({
                 data: [...res.data.dataList.map(val => {
