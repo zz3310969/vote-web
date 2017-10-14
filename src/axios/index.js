@@ -49,6 +49,12 @@ export const votelist = (params) => axios.get('/api/vote/voteAction/list.action'
     console.log(error);
 });
 
+export const votereport = (params) => axios.get('/api/vote/voteAction/reportByoneAct.action',{params:params}).then(function (response) {
+    console.log(response.data)
+    return response.data;
+}).catch(function (error) {
+    console.log(error);
+});
 
 export const getPros = () => axios.post('http://api.xitu.io/resources/github', {
     category: "trending",
