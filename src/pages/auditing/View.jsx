@@ -25,7 +25,7 @@ class AuditingViewForms extends React.Component {
         previewImage: '',
         production:{},
         fileList: [],
-        optype:1||this.props.location.query.optype,
+        optype:this.props.location.query.optype||1,
       };
 
     componentDidMount() {
@@ -35,7 +35,8 @@ class AuditingViewForms extends React.Component {
     start = (parm) => {
         this.setState({loading: true});
         load("/api/vote/productionAction/load.action",parm).then(res => {
-            console.log(res.data)
+            // console.log(res.data)
+            return false
             const fileList = this.state.fileList;
             var image ={};
             image.uid=-1;
@@ -262,7 +263,13 @@ class AuditingViewForms extends React.Component {
                 </Row>
                 <FormItem {...tailFormItemLayout}>
                     <Link to={'/app/auditing/list'}><Button>取消</Button></Link>
-                    <Button type="primary" htmlType="submit" size={'default'} style={{marginLeft:20}}>确定</Button>
+                    {
+                        this.state.optype==2?
+                        <Button type="primary" htmlType="submit" size={'default'} style={{marginLeft:20}}>确定</Button>
+                        :
+                        ''
+                    }
+                    
                 </FormItem>
 
                 <FormItem>
