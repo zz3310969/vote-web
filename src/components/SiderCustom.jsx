@@ -70,8 +70,8 @@ class SiderCustom extends Component {
                     onOpenChange={this.openMenu}
                 >
                     <Menu.Item key="/app/dashboard/index">
-                        {/*<Link to={'/app/dashboard/index'}><Icon type="mobile" /><span className="nav-text">首页</span></Link>*/}
-                        <Link to={''}><Icon type="mobile" /><span className="nav-text">首页</span></Link>
+                        <Link to={'/app/dashboard/index'}><Icon type="mobile" /><span className="nav-text">首页</span></Link>
+                        {/*<Link to={''}><Icon type="mobile" /><span className="nav-text">首页</span></Link>*/}
                     </Menu.Item>
                     {/*<SubMenu*/}
                         {/*key="/app/ui"*/}
