@@ -84,7 +84,7 @@ class RegistList extends React.Component {
             key: 'operation',
             width:100,
             render:function(text,record,index){
-                const linkUrl = '/app/regist/view?id='+record.id
+                const linkUrl = '/app/auditing/list?user_id='+record.id+"&username="+record.linkman
                 return (
                     <Link to={linkUrl} ><Icon type="link" />查看作品</Link>
                 )
