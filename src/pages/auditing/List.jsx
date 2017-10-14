@@ -2,7 +2,7 @@ import React from 'react';
 import {Card, Row, Col, Menu, Dropdown,Form,Table,Input,Button,Icon,Select,Badge,Modal} from 'antd';
 import BreadcrumbCustom from '../../components/BreadcrumbCustom';
 import { Link } from 'react-router';
-import {getTableList,update} from '../../axios/vote'
+import {getTableList,update,getActiviAtyList} from '../../axios/vote'
 import {get_} from '../../axios/tools'
 
 
@@ -21,6 +21,7 @@ class AuditingList extends React.Component {
         size: 'default',
         loading: false,
         iconLoading: false,
+        activityList:[],
         auditState:[],
         pagination: {
             pageSize: 10
@@ -32,6 +33,11 @@ class AuditingList extends React.Component {
         const queryParams = this.props.location.query;
         this.start(queryParams);
         this.props.form.setFieldsValue({username:queryParams["username"]})
+        getActiviAtyList().then(res => {
+            this.setState({
+                activityList:res.data,
+            });
+        });
     }
 
     load = () => {
@@ -111,8 +117,8 @@ class AuditingList extends React.Component {
             key: 'name'
         }, {
             title: '投票编号',
-            dataIndex: 'activity_code',
-            key: 'activity_code'
+            dataIndex: 'vote_code',
+            key: 'vote_code'
         }, {
             title: '作品联系人',
             dataIndex: 'username',
@@ -136,7 +142,7 @@ class AuditingList extends React.Component {
             key: 'proStatusName',
 
         }, {
-            title: '',
+            title: '操作',
             dataIndex: 'operator',
             key: 'operator',
             width:160,
@@ -183,7 +189,7 @@ class AuditingList extends React.Component {
         };
         return (
             <div className="gutter-example">
-                <BreadcrumbCustom first="活动配置" second="审计列表" />
+                <BreadcrumbCustom first="活动配置" second="审核列表" />
                 <Row gutter={16}>
                     <Form layout='horizontal' onSubmit={this.handleSubmit} style={{marginTop: 20}}>
 
@@ -204,10 +210,12 @@ class AuditingList extends React.Component {
                             {...formItemLayout}
                             label="所属活动"
                         >
-                            {getFieldDecorator('actName', {
+                            {getFieldDecorator('activity_code', {
                                 rules: [],
                             })(
-                                <Input size='default' />
+                                <Select style={{width:'100%'}}  size='default'>
+                                    {this.state.activityList.map(item => <Select.Option key={item.code}>{item.name}</Select.Option>)}
+                                </Select>
                             )}
                         </FormItem>
                     </Col>

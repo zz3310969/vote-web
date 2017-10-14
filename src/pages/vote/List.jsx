@@ -1,8 +1,10 @@
 import React from 'react';
-import {Row, Col,Table,Input,Button,Icon,DatePicker,Form,Card,} from 'antd';
+import {Row, Col,Table,Input,Button,Icon,DatePicker,Form,Card,Select} from 'antd';
 import BreadcrumbCustom from '../../components/BreadcrumbCustom';
 import { Link } from 'react-router';
 import { votelist} from '../../axios';
+import { getActiviAtyList} from '../../axios/vote';
+
 
 const { MonthPicker, RangePicker } = DatePicker;
 /*投票结果列表*/
@@ -21,11 +23,17 @@ class VoteList extends React.Component {
         size: 'default',
         loading: false,
         iconLoading: false,
-        data: []
+        data: [],
+        activityList:[],
     };
 
     componentDidMount() {
         this.start(this.state.from_query);
+        getActiviAtyList().then(res => {
+            this.setState({
+                activityList:res.data,
+            });
+        });
     }
 
     start = (parm) => {
@@ -132,10 +140,12 @@ class VoteList extends React.Component {
                             {...formItemLayout}
                             label="活动名称"
                         >
-                            {getFieldDecorator('activity_name', {
+                            {getFieldDecorator('activity_code', {
                                 rules: [],
                             })(
-                                <Input />
+                                <Select style={{width:'100%'}}  size='default'>
+                                    {this.state.activityList.map(item => <Select.Option key={item.code}>{item.name}</Select.Option>)}
+                                </Select>
                             )}
                         </FormItem>
                     </Col>

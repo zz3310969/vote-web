@@ -41,3 +41,10 @@ export const update = (url,params) => axios.post(url, params).then(function (res
 
     console.log(error);
 });
+
+export const getActiviAtyList = () => axios.get("/api/vote/activityAction/all.action").then(function (response) {
+    return response.data;
+}).catch(function (error) {
+
+    console.log(error);
+});

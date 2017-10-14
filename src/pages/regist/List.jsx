@@ -1,8 +1,8 @@
 import React from 'react';
-import {Card, Row, Col, Menu, Dropdown,Form,Table,Input,Button,Icon} from 'antd';
+import {Card, Row, Col, Menu, Dropdown,Form,Table,Input,Button,Icon,Select} from 'antd';
 import BreadcrumbCustom from '../../components/BreadcrumbCustom';
 import { Link } from 'react-router';
-import {getTableList,update} from '../../axios/vote'
+import {getTableList,update,getActiviAtyList} from '../../axios/vote'
 
 /*报名列表*/
 
@@ -14,6 +14,7 @@ class RegistList extends React.Component {
         size: 'default',
         loading: false,
         iconLoading: false,
+        activityList:[],
     };
 
 
@@ -21,6 +22,11 @@ class RegistList extends React.Component {
     componentDidMount() {
         const queryParams = this.props.location.query;
         this.start(queryParams);
+        getActiviAtyList().then(res => {
+            this.setState({
+                activityList:res.data,
+            });
+        });
     }
 
 
@@ -82,7 +88,7 @@ class RegistList extends React.Component {
             dataIndex: 'actName',
             key: 'actName',
         }, {
-            title: '',
+            title: '操作',
             dataIndex: 'operation',
             key: 'operation',
             width:100,
@@ -143,10 +149,12 @@ class RegistList extends React.Component {
                             {...formItemLayout}
                             label="活动名称"
                         >
-                            {getFieldDecorator('actName', {
+                            {getFieldDecorator('activity_code', {
                                 rules: [],
                             })(
-                                <Input />
+                                <Select style={{width:'100%'}}  size='default'>
+                                    {this.state.activityList.map(item => <Select.Option key={item.code}>{item.name}</Select.Option>)}
+                                </Select>
                             )}
                         </FormItem>
                     </Col>
