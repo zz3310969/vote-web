@@ -148,7 +148,7 @@ class VoteStatisticsList extends React.Component {
                         {/*<Button onClick={this.searchHandle} type="primary">搜索</Button>*/}
                     {/*</Col>*/}
                 {/*</Row>*/}
-                <Card bordered={false} >
+                <Card bordered={false} extra={<Link to={'/app/activity/list'}><Button>返回</Button></Link>} >
                     <Row>
                         <Col span={24}>
                             <VoteTable/>

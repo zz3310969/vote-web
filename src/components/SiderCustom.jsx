@@ -135,7 +135,7 @@ class SiderCustom extends Component {
                         <Menu.Item key="/app/auditing/list"><Link to={'/app/auditing/list'}>作品审核</Link></Menu.Item>
                         {<Menu.Item key="/app/regist/list"><Link to={'/app/regist/list'}>报名信息</Link></Menu.Item>}
                         <Menu.Item key="/app/vote/list"><Link to={'/app/vote/list'}>投票记录</Link></Menu.Item>
-                        {<Menu.Item key="/app/vote/statisticall"><Link to={'/app/vote/statisticall'}>投票统计</Link></Menu.Item>}
+                        {/*{<Menu.Item key="/app/vote/statisticall"><Link to={'/app/vote/statisticall'}>投票统计</Link></Menu.Item>}*/}
                     </SubMenu>
 
                     {/*<SubMenu*/}

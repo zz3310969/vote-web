@@ -3,7 +3,8 @@ import {Row, Col,Table,Input,Button,Icon,DatePicker,Form,Card,Select} from 'antd
 import BreadcrumbCustom from '../../components/BreadcrumbCustom';
 import { Link } from 'react-router';
 import { votelist} from '../../axios';
-import { getActiviAtyList} from '../../axios/vote';
+import {getTableList,getActiviAtyList} from '../../axios/vote'
+import {get_} from '../../axios/tools'
 
 
 const { MonthPicker, RangePicker } = DatePicker;
@@ -11,14 +12,8 @@ const { MonthPicker, RangePicker } = DatePicker;
 const FormItem = Form.Item;
 class VoteList extends React.Component {
     state = {
-        from_query: {
-            proName: '',
-            actName:'',
-            vote_code:'',
-            vote_start_date :'',
-            vote_end_date :'',
-            currentPage: 1,
-            limit: 10
+        pagination: {
+            pageSize: 10
         },
         size: 'default',
         loading: false,
@@ -28,7 +23,10 @@ class VoteList extends React.Component {
     };
 
     componentDidMount() {
-        this.start(this.state.from_query);
+        // const queryParams = this.props.location.query;
+        // this.start(queryParams);
+        // this.props.form.setFieldsValue({username:queryParams["username"]})
+        this.start(this.state.pagination);
         getActiviAtyList().then(res => {
             this.setState({
                 activityList:res.data,
@@ -36,20 +34,35 @@ class VoteList extends React.Component {
         });
     }
 
-    start = (parm) => {
-        this.setState({loading: true});
 
-        votelist(parm).then(res => {
-            console.log(res.data)
+    start = (parms) => {
+        this.setState({loading: true});
+        getTableList('/api/vote/voteAction/list.action',parms).then(res => {
+            const pagination = { ...this.state.pagination };
+            pagination.total = res.data.total;
             this.setState({
                 data: [...res.data.dataList.map(val => {
                     val.key = val.id;
                     return val;
                 })],
+                pagination,
                 loading: false
             });
         });
     };
+
+    handleTableChange = (pagination, filters, sorter) => {
+        const pager = { ...this.state.pagination };
+        pager.current = pagination.current;
+        this.setState({
+            pagination: pager,
+        });
+
+        let submitValues = {...this.props.form.getFieldsValue()}
+        submitValues.currentPage= pagination.current;
+        this.setState({loading: true});
+        this.start(submitValues);
+    }
 
     handleSubmit = (e) => {
         let submitValues = {};
@@ -57,17 +70,12 @@ class VoteList extends React.Component {
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 Object.assign(submitValues, values)
-                const {dispatch} = this.props;
+                if(values["vote_range_date"] != null){
+                    submitValues["vote_start_date"] = values["vote_range_date"][0].format('YYYY-MM-DD HH:mm:ss')
+                    submitValues["vote_end_date"] = values["vote_range_date"][1].format('YYYY-MM-DD HH:mm:ss')
+                }
                 this.setState({loading: true});
-                votelist(submitValues).then(res => {
-                    this.setState({
-                        data: [...res.data.dataList.map(val => {
-                            val.key = val.id;
-                            return val;
-                        })],
-                        loading: false
-                    });
-                });
+                this.start(submitValues);
             }
         });
     };
@@ -103,8 +111,18 @@ class VoteList extends React.Component {
             key: 'vote_date'
         }];
 
+        const tableProps = {
+            columns: columns,
+            rowKey: record => record.id,
+            dataSource: this.state.data,
+            pagination: this.state.pagination,
+            loading: this.state.loading,
+            onChange: this.handleTableChange,
+        };
+
+
         const VoteTable = () => (
-            <Table columns={columns} dataSource={this.state.data} />
+            <Table {...tableProps} />
         );
 
         const size = this.state.size;
@@ -122,13 +140,14 @@ class VoteList extends React.Component {
         return (
             <div className="gutter-example">
                 <BreadcrumbCustom first="投票信息" second="投票列表" />
+                <Form layout='horizontal' onSubmit={this.handleSubmit} style={{marginTop: 20}}>
                 <Row gutter={16}>
                     <Col className="gutter-row" md={6}>
                         <FormItem
                             {...formItemLayout}
                             label="作品名称"
                         >
-                            {getFieldDecorator('works_name', {
+                            {getFieldDecorator('proName', {
                                 rules: [],
                             })(
                                 <Input />
@@ -156,7 +175,7 @@ class VoteList extends React.Component {
                             {...formItemLayout}
                             label="投票编号"
                         >
-                            {getFieldDecorator('vote_num', {
+                            {getFieldDecorator('vote_code', {
                                 rules: [],
                             })(
                                 <Input />
@@ -168,7 +187,7 @@ class VoteList extends React.Component {
                             {...formItemLayout}
                             label="投票日期"
                         >
-                            {getFieldDecorator('audit_state', {
+                            {getFieldDecorator('vote_range_date', {
                                 rules: [],
                             })(
                               <RangePicker />
@@ -177,9 +196,10 @@ class VoteList extends React.Component {
                     </Col>
                     <Col className="gutter-row" md={4}>
                         <Button onClick={this.clearHandle} type="danger">清空</Button>
-                        <Button onClick={this.searchHandle} type="primary">搜索</Button>
+                        <Button type='primary' htmlType="submit">搜索</Button>
                     </Col>
                 </Row>
+                </Form>
                 <Card bordered={false} >
                     <Row>
                         <Col span={24}>
